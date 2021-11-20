@@ -1,18 +1,24 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { Card, Col, Container, Row, Button } from 'react-bootstrap'
 import { addToBasktet} from '../actions/cartAction'
+import { fetchProducts } from '../actions/productAction'
 
 export default function ProductCard() {
 
     const [products, setProducts] = useState([])
+    const { product } = useSelector((state) => state.product);
 
 
     useEffect(()=>{
       const fetchData=async()=>{
           const {data}= await axios.get('/api/products')
           setProducts(data)
+          dispatch(fetchProducts())
+          if(product){
+            console.log(product[0],'product');
+          }
          
       }
       fetchData()
@@ -37,7 +43,7 @@ export default function ProductCard() {
                <Container className="mt-4">
               
                <Row>
-               {products && products.map((product)=>(
+               {product && product.map((product)=>(
                    <Col key={product._id} md={3} className="mb-4">
                        <Card style={{ width: '18rem' }}>
                            <Card.Img variant="top" className='prd-img' src={product.image} />
